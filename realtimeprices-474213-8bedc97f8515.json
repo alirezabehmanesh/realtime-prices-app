@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "realtimeprices-474213",
+  "private_key_id": "2680fbd65ff1d7ee79bd9c49a6648cbb2a7f22a5",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCb4otl4BpnCSUI\nfkoDpK/C8MLgOu9SL407eU+pavShY+AnMR2JX5nUA0ftQStSJ3UiXmhO+kpiU1Hq\nA2zvyZGONVG/oAwNto7CCIHHbgOozTkc7WD/Lr9AWt40RTb6ksQ6cxIRbDAXxGuU\nIG7x3FHPt+ZFtU6ujNKDfaulEMZd0yxM8GiBCUtYFJMIJLBjGoH9lNQtqnjeXH+J\nUa68Dd4flht2qIxgbdgCzRvngMm9YXnZqKXlkEfg3LUuDWUiE4gkyW7DQ1GXYb1J\nSpaywBsTcd/wjUQTuh2cNbzWbd6DuXO5yUHTRKPVpbdn51Zmdo5M+5ePkfQ3tr6O\nruBA6XwpAgMBAAECggEAIjZ/yUl9CfmuFNXg6TlLMSIV51BQB83zdabrpr+YdtZ8\nkyV6udSPZsKclfQsbaDG2tb1FkZlLnzieNWtIlivV1KZAVF/a8ASR4BF+Y8KAxGd\ntB1eYUtxgs6ev8KkLS0qn7hzMfs4d/LueImAyBkGpKwUQF7paLJ0HpNlqXoLy3oO\nlAN2ITsh4YXoTjdGB0fYAg6LwmsDPN9omuubJt4VCIjSfvOJh+Xe6D5DBVDwNZm5\nw3Itd2Blw28A+g4kRsxHXHniaBwUntmvP2YmXghKmZckWgoQq9swHayxKl0tg6yY\nrL8+2cJrZtRd2QlUTxZyo1oLshAQDqRlWZRemMC7nQKBgQDQy10ZiKv/AXhm6d81\ngOekz4f9Q3RJroecSnXzIdlDq1vR6gyeeAW5VyJh4z70RmMGdj2mOWSwSCwHhWrj\n+1qRtJRaRxKUBrTqy2Bl8b+XfGHtqw4bbmOx3NqhfVoy+t35nnOD3zPDa/KhaHqM\nTUYy6GD1rKzM55LMJRJDsgDNPQKBgQC/IOEBxwUIO2agRhe8M2Y1yvI9SxSgzTF3\n1YNzHvyZhH44oKT61/Vzn0fxnH8RIssdf0yjGtpowENtgn3qQxY9CI/DIHJ0erz9\nZqjGLDD2PvsWm2ZKmeMdDV8tLi/Qqd/11NbJwfpZva2uXfI9lfOoZ0imboYOtVOY\nrRjsCpNxXQKBgGfpTeQvSKoYqTtOmW+fP6mePyekMnOZEJSP2jOuXNp4pbHKsY0M\nXozm+I2O8v3PKelFX1kipyG0SXVUyOW9ak2peUuUo4JX9CIGJWuW7KsPlA0cXGD6\nh1M1fvlv0Twd7esVGJhAtRpE1vPNc2/v5UfgrqCV10oC1eQTbwuRwyRhAoGBALRv\n5tyVtjN6WL2wzpGXeMQKD70714KjlTMLuKiDNXf9NGhjiL1kCk6YrgP0eaWE0nrL\nhl9pZ46DDGUjT5pMsX73STmutT8v7KHSPD2y1Jp1BPjnxp9hPp9b02HE+9EjvtLH\nl+srnR0BzCkUejAYE8sFjvnI1/ikyQIXULLunRnlAoGBAL7Fws/icxAlzqZ9HV3u\nSDXxXdtyRwzBAzoJD8r/y7/512AI++vmKAXMwzRj2RxeJR4vhA/qF9PB0Z4MIu5k\nZ9vwaHv/YRh8o3IpqMy/yWxMQ9Fq4oUTXZeqIG3FAZ3cMEqjNzL6/kkfZFy9Z2Au\nvVVblwpv6fCbHEfZ+7a6hjzy\n-----END PRIVATE KEY-----\n",
+  "client_email": "streamlit-sheet-bot@realtimeprices-474213.iam.gserviceaccount.com",
+  "client_id": "102899158691570302723",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/streamlit-sheet-bot%40realtimeprices-474213.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
