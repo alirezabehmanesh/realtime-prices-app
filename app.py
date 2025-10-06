@@ -1,85 +1,80 @@
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
 import requests
+from pyairtable import Table
 from datetime import datetime
+import streamlit as st
 import time
 
-# --- تنظیمات API ---
-API_CURRENCY = "https://api.alanchand.com/?type=currencies&token=OHt1R0mKruA6tGysczCy"
-API_GOLD = "https://api.alanchand.com/?type=golds&token=OHt1R0mKruA6tGysczCy"
+# ====== تنظیمات Airtable ======
+AIRTABLE_API_KEY = "patRr6OVKGHn2Zyin.f779b21d2982f5d752d8f596220d3c55653851fe3b5d0e17e58813d3bec04474"
+BASE_ID = "appBh5G9yDkiqBAkd"
+TABLE_NAME = "tblVEZtxVsSXgOREF"
 
-CURRENCY_SYMBOLS = {"usd", "eur"}
-GOLD_SYMBOLS = {"abshodeh", "geram18", "sekkeh", "nim", "rob", "gerami"}
+table = Table(AIRTABLE_API_KEY, BASE_ID, TABLE_NAME)
 
-# --- اتصال به Google Sheets ---
-SCOPE = ["https://www.googleapis.com/auth/spreadsheets"]
+# ====== API URLs ======
+API_CURRENCIES = "https://api.alanchand.com/?type=currencies&token=OHt1R0mKruA6tGysczCy"
+API_GOLDS = "https://api.alanchand.com/?type=golds&token=OHt1R0mKruA6tGysczCy"
 
-# مسیر فایل JSON در root repository
-creds = ServiceAccountCredentials.from_json_keyfile_name(
-    "realtimeprices-474213-8bedc97f8515.json", SCOPE
-)
-client = gspread.authorize(creds)
+# ====== Symbols to extract ======
+CURRENCIES_TO_KEEP = ["USD", "EUR"]
+GOLDS_TO_KEEP = ["Abshodeh", "18ayar", "Sekkeh", "Nim", "Rob"]
 
-SHEET_NAME = "CurrencyGoldPrices"
-sheet = client.open(SHEET_NAME).sheet1
+# ====== Streamlit UI ======
+st.title("Sync API Data to Airtable (Auto-refresh every 1 minute)")
 
-# --- تابع برای گرفتن داده‌ها ---
-def fetch_data():
-    rows = []
+status_text = st.empty()  # برای نمایش وضعیت
+counter = st.empty()      # برای نمایش شمارشگر
 
-    # دریافت ارزها
+def fetch_api(url):
+    response = requests.get(url)
+    response.raise_for_status()
+    return response.json()
+
+def sync_data():
     try:
-        res_currency = requests.get(API_CURRENCY)
-        data_currency = res_currency.json()
-        for symbol, info in data_currency.items():
-            if symbol in CURRENCY_SYMBOLS:
-                rows.append([
-                    datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    symbol,
-                    info.get("name", symbol),
-                    info.get("sell", 0)
-                ])
+        # گرفتن داده‌ها
+        currencies_data = fetch_api(API_CURRENCIES)
+        golds_data = fetch_api(API_GOLDS)
+
+        # ترکیب داده‌ها
+        records_to_insert = []
+
+        for item in currencies_data:
+            symbol = item.get("symbol")
+            if symbol in CURRENCIES_TO_KEEP:
+                records_to_insert.append({
+                    "timestamp": datetime.now().isoformat(),
+                    "symbol": symbol,
+                    "Name": item.get("name"),
+                    "Price": item.get("price")
+                })
+
+        for item in golds_data:
+            symbol = item.get("symbol")
+            if symbol in GOLDS_TO_KEEP:
+                records_to_insert.append({
+                    "timestamp": datetime.now().isoformat(),
+                    "symbol": symbol,
+                    "Name": item.get("name"),
+                    "Price": item.get("price")
+                })
+
+        # پاک کردن رکوردهای قبلی
+        existing_records = table.all()
+        for rec in existing_records:
+            table.delete(rec['id'])
+
+        # اضافه کردن رکوردهای جدید
+        for record in records_to_insert:
+            table.create(record)
+
+        status_text.success(f"{len(records_to_insert)} رکورد جدید وارد Airtable شد.")
     except Exception as e:
-        print("❌ خطا در دریافت ارز:", e)
+        status_text.error(f"خطا: {e}")
 
-    # دریافت طلاها
-    try:
-        res_gold = requests.get(API_GOLD)
-        data_gold = res_gold.json()
-        for symbol, info in data_gold.items():
-            if symbol in GOLD_SYMBOLS:
-                rows.append([
-                    datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    symbol,
-                    info.get("name", symbol),
-                    info.get("price", 0)
-                ])
-    except Exception as e:
-        print("❌ خطا در دریافت طلا:", e)
-
-    return rows
-
-
-# --- حلقه اصلی برای ذخیره لحظه‌ای ---
-REFRESH_SECONDS = 60  # فاصله زمانی بین رفرش داده‌ها
-
-print("شروع ذخیره داده‌ها در Google Sheet...")
-
-# اطمینان از وجود عنوان ستون‌ها
-sheet.update("A1:D1", [["Timestamp", "Symbol", "Name", "Price"]])
-
+# ====== حلقه رفرش هر 1 دقیقه ======
 while True:
-    data = fetch_data()
-    if not data:
-        print("⚠️ داده‌ای دریافت نشد، تلاش مجدد بعداً...")
-        time.sleep(REFRESH_SECONDS)
-        continue
-
-    # پاک کردن داده‌های قبلی (ردیف‌های بعد از عنوان)
-    sheet.batch_clear(["A2:D1000"])
-
-    # نوشتن داده‌های جدید
-    sheet.update(f"A2:D{len(data)+1}", data)
-
-    print(f"✅ {len(data)} ردیف جدید جایگزین شد در {datetime.now().strftime('%H:%M:%S')}")
-    time.sleep(REFRESH_SECONDS)
+    sync_data()
+    for i in range(60, 0, -1):
+        counter.text(f"رفرش بعدی در: {i} ثانیه")
+        time.sleep(1)
