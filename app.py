@@ -20,7 +20,7 @@ SCOPE = [
 ]
 
 creds = ServiceAccountCredentials.from_json_keyfile_name(
-    "C:/arz/realtimeprices-474213-8bedc97f8515.json", SCOPE
+    "realtimeprices-474213-8bedc97f8515.json", SCOPE
 )
 client = gspread.authorize(creds)
 
@@ -93,3 +93,4 @@ while True:
 
     print(f"✅ {len(data)} ردیف جدید جایگزین شد در {datetime.now().strftime('%H:%M:%S')}")
     time.sleep(REFRESH_SECONDS)
+
