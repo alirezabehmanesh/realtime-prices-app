@@ -21,9 +21,8 @@ GOLDS_TO_KEEP = ["Abshodeh", "18ayar", "Sekkeh", "Nim", "Rob"]
 
 # ====== Streamlit UI ======
 st.title("Sync API Data to Airtable (Auto-refresh every 1 minute)")
-
-status_text = st.empty()  # برای نمایش وضعیت
-counter = st.empty()      # برای نمایش شمارشگر
+status_text = st.empty()
+counter = st.empty()
 
 def fetch_api(url):
     response = requests.get(url)
@@ -32,39 +31,43 @@ def fetch_api(url):
 
 def sync_data():
     try:
-        # گرفتن داده‌ها
         currencies_data = fetch_api(API_CURRENCIES)
         golds_data = fetch_api(API_GOLDS)
 
-        # ترکیب داده‌ها
         records_to_insert = []
 
-        for item in currencies_data:
-            symbol = item.get("symbol")
-            if symbol in CURRENCIES_TO_KEEP:
-                records_to_insert.append({
-                    "timestamp": datetime.now().isoformat(),
-                    "symbol": symbol,
-                    "Name": item.get("name"),
-                    "Price": item.get("price")
-                })
+        # ====== پردازش ارزها ======
+        if isinstance(currencies_data, dict):
+            for symbol, info in currencies_data.items():
+                if symbol in CURRENCIES_TO_KEEP:
+                    records_to_insert.append({
+                        "timestamp": datetime.now().isoformat(),
+                        "symbol": symbol,
+                        "Name": info.get("name"),
+                        "Price": info.get("price")
+                    })
+        else:
+            status_text.error("ساختار داده ارزها غیرمنتظره است!")
 
-        for item in golds_data:
-            symbol = item.get("symbol")
-            if symbol in GOLDS_TO_KEEP:
-                records_to_insert.append({
-                    "timestamp": datetime.now().isoformat(),
-                    "symbol": symbol,
-                    "Name": item.get("name"),
-                    "Price": item.get("price")
-                })
+        # ====== پردازش طلاها ======
+        if isinstance(golds_data, dict):
+            for symbol, info in golds_data.items():
+                if symbol in GOLDS_TO_KEEP:
+                    records_to_insert.append({
+                        "timestamp": datetime.now().isoformat(),
+                        "symbol": symbol,
+                        "Name": info.get("name"),
+                        "Price": info.get("price")
+                    })
+        else:
+            status_text.error("ساختار داده طلاها غیرمنتظره است!")
 
-        # پاک کردن رکوردهای قبلی
+        # ====== پاک کردن رکوردهای قبلی ======
         existing_records = table.all()
         for rec in existing_records:
             table.delete(rec['id'])
 
-        # اضافه کردن رکوردهای جدید
+        # ====== اضافه کردن رکوردهای جدید ======
         for record in records_to_insert:
             table.create(record)
 
